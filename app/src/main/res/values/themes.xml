@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Interviewface" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/button_primary</item>
+        <item name="colorPrimaryVariant">@color/dark_background</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/yellow_accent</item>
+        <item name="colorSecondaryVariant">@color/yellow_accent</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/dark_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/dark_background</item>
+        
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        
+        <!-- Bottom navigation colors -->
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+
+    <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+        <item name="backgroundTint">@color/dark_background</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/inactive_icon</item>
+    </style>
+</resources>
