@@ -1,16 +1,17 @@
 package com.example.interviewface
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
@@ -23,40 +24,74 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.interviewsViewPager)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
-        // Set up ViewPager
+        setupViewPager()
+        setupBottomNavigation()
+    }
+
+    private fun setupViewPager() {
         val interviews = listOf(
             Interview(
-                "Entrevista de trabajo de marketing",
-                "Prepárate para tu puesto de marketing entrevista",
-                "https://example.com/marketing.jpg"
+                getString(R.string.marketing_interview_title),
+                getString(R.string.marketing_interview_description),
+                "https://raw.githubusercontent.com/yourusername/interview-app-images/main/marketing.jpg"
             ),
             Interview(
-                "Entrevista de ingeniero de software",
-                "Perfecciona tus habilidades para tu entrevista de ingeniería de software",
-                "https://example.com/software.jpg"
+                getString(R.string.software_interview_title),
+                getString(R.string.software_interview_description),
+                "https://raw.githubusercontent.com/yourusername/interview-app-images/main/software.jpg"
             ),
             Interview(
-                "Entrevista de análisis de datos",
-                "Prepárate para tu entrevista de análisis de datos",
-                "https://example.com/data.jpg"
+                getString(R.string.data_interview_title),
+                getString(R.string.data_interview_description),
+                "https://raw.githubusercontent.com/yourusername/interview-app-images/main/data.jpg"
             )
         )
 
-        viewPager.adapter = InterviewAdapter(interviews)
-        viewPager.offscreenPageLimit = 1
-        
-        // Add padding for carousel effect
-        val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.page_margin)
-        val offsetPx = resources.getDimensionPixelOffset(R.dimen.page_offset)
-        viewPager.setPageTransformer { page, position ->
-            val viewPager = page.parent.parent as ViewPager2
-            val offset = position * -(2 * offsetPx + pageMarginPx)
-            if (viewPager.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
-                page.translationX = offset
+        viewPager.apply {
+            adapter = InterviewAdapter(interviews)
+            offscreenPageLimit = 1
+            
+            // Set page transformer for carousel effect
+            setPageTransformer { page, position ->
+                val minScale = 0.85f
+                val minAlpha = 0.5f
+                
+                page.apply {
+                    val pageWidth = width
+                    when {
+                        position < -1 -> { // [-Infinity,-1)
+                            alpha = 0f
+                            scaleX = minScale
+                            scaleY = minScale
+                        }
+                        position <= 1 -> { // [-1,1]
+                            val scaleFactor = minScale.coerceAtLeast(1 - abs(position))
+                            val vertMargin = pageWidth * (1 - scaleFactor) / 2
+                            val horzMargin = pageWidth * (1 - scaleFactor) / 2
+                            
+                            translationX = if (position < 0) {
+                                horzMargin - vertMargin / 2
+                            } else {
+                                horzMargin + vertMargin / 2
+                            }
+                            
+                            scaleX = scaleFactor
+                            scaleY = scaleFactor
+                            
+                            alpha = (minAlpha + (((scaleFactor - minScale) / (1 - minScale)) * (1 - minAlpha)))
+                        }
+                        else -> { // (1,+Infinity]
+                            alpha = 0f
+                            scaleX = minScale
+                            scaleY = minScale
+                        }
+                    }
+                }
             }
         }
+    }
 
-        // Set up bottom navigation
+    private fun setupBottomNavigation() {
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> true
@@ -96,9 +131,12 @@ class InterviewAdapter(private val interviews: List<Interview>) :
         holder.titleView.text = interview.title
         holder.descriptionView.text = interview.description
         
+        // Load image using Glide
         Glide.with(holder.imageView.context)
             .load(interview.imageUrl)
             .centerCrop()
+            .placeholder(R.drawable.ic_launcher_foreground)
+            .error(R.drawable.ic_launcher_foreground)
             .into(holder.imageView)
     }
 
