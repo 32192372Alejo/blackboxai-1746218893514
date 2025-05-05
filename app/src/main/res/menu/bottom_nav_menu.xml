@@ -9,9 +9,9 @@
         android:icon="@drawable/ic_interviews"
         android:title="Entrevistas" />
     <item
-        android:id="@+id/navigation_comments"
+        android:id="@+id/navigation_tips"
         android:icon="@drawable/ic_comments"
-        android:title="Comentarios" />
+        android:title="Consejos" />
     <item
         android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_profile"
