@@ -23,13 +23,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_home -> loadFragment(HomeFragment.newInstance())
-                R.id.navigation_interviews -> loadFragment(InterviewsFragment.newInstance())
-                R.id.navigation_tips -> loadFragment(TipsFragment.newInstance())
-                R.id.navigation_profile -> loadFragment(ProfileFragment.newInstance())
-                R.id.navigation_more -> loadFragment(MoreFragment.newInstance())
+            val fragment = when (item.itemId) {
+                R.id.navigation_home -> HomeFragment.newInstance()
+                R.id.navigation_interviews -> InterviewsFragment.newInstance()
+                R.id.navigation_tips -> TipsFragment.newInstance()
+                R.id.navigation_profile -> ProfileFragment.newInstance()
+                R.id.navigation_more -> MoreFragment.newInstance()
+                else -> HomeFragment.newInstance()
             }
+            loadFragment(fragment)
             true
         }
     }
