@@ -8,27 +8,26 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewPager: ViewPager2
+    private lateinit var practiceInterviewsRecyclerView: RecyclerView
     private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewPager = findViewById(R.id.interviewsViewPager)
+        practiceInterviewsRecyclerView = findViewById(R.id.practiceInterviewsRecyclerView)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
-        setupViewPager()
+        setupRecyclerView()
         setupBottomNavigation()
     }
 
-    private fun setupViewPager() {
+    private fun setupRecyclerView() {
         val interviews = listOf(
             Interview(
                 getString(R.string.marketing_interview_title),
@@ -47,47 +46,9 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        viewPager.apply {
+        practiceInterviewsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = InterviewAdapter(interviews)
-            offscreenPageLimit = 1
-            
-            // Set page transformer for carousel effect
-            setPageTransformer { page, position ->
-                val minScale = 0.85f
-                val minAlpha = 0.5f
-                
-                page.apply {
-                    val pageWidth = width
-                    when {
-                        position < -1 -> { // [-Infinity,-1)
-                            alpha = 0f
-                            scaleX = minScale
-                            scaleY = minScale
-                        }
-                        position <= 1 -> { // [-1,1]
-                            val scaleFactor = minScale.coerceAtLeast(1 - abs(position))
-                            val vertMargin = pageWidth * (1 - scaleFactor) / 2
-                            val horzMargin = pageWidth * (1 - scaleFactor) / 2
-                            
-                            translationX = if (position < 0) {
-                                horzMargin - vertMargin / 2
-                            } else {
-                                horzMargin + vertMargin / 2
-                            }
-                            
-                            scaleX = scaleFactor
-                            scaleY = scaleFactor
-                            
-                            alpha = (minAlpha + (((scaleFactor - minScale) / (1 - minScale)) * (1 - minAlpha)))
-                        }
-                        else -> { // (1,+Infinity]
-                            alpha = 0f
-                            scaleX = minScale
-                            scaleY = minScale
-                        }
-                    }
-                }
-            }
         }
     }
 
